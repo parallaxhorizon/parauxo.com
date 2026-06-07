@@ -305,13 +305,14 @@
     const auth = getAuth(app);
 
     const params  = new URLSearchParams(window.location.search);
+    const mode    = params.get("mode");
     const oobCode = params.get("oobCode");
 
     const strengthLevels = ["", "Weak", "Fair", "Good", "Strong"];
     const strengthColors = ["", "#ef4444", "#f97316", "#eab308", "#22c55e"];
 
-    // Validate the code on page load; show error screen if invalid/expired
-    if (!oobCode) {
+    // Validate Firebase params on page load
+    if (mode !== "resetPassword" || !oobCode) {
       showInvalidScreen();
     } else {
       verifyPasswordResetCode(auth, oobCode).catch(() => showInvalidScreen());
