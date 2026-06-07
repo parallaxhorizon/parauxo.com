@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reset Password — Parauxo</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding: 24px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+      animation: fadeUp 0.4s ease;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .logo-mark {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #a78bfa, #7c3aed);
+      border-radius: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      font-size: 24px;
+      box-shadow: 0 8px 24px rgba(124, 58, 237, 0.4);
+    }
+
+    .logo h1 {
+      color: #fff;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .logo p {
+      color: rgba(255,255,255,0.5);
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    h2 {
+      color: #fff;
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      color: rgba(255,255,255,0.5);
+      font-size: 14px;
+      margin-bottom: 28px;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      color: rgba(255,255,255,0.7);
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    input[type="password"], input[type="text"] {
+      width: 100%;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      padding: 12px 44px 12px 14px;
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    input:focus {
+      border-color: #7c3aed;
+      background: rgba(124, 58, 237, 0.1);
+    }
+
+    input::placeholder { color: rgba(255,255,255,0.3); }
+
+    .toggle-eye {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: rgba(255,255,255,0.4);
+      padding: 4px;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+    .toggle-eye:hover { color: rgba(255,255,255,0.8); }
+
+    /* Strength meter */
+    .strength-bar {
+      display: flex;
+      gap: 4px;
+      margin-top: 8px;
+    }
+
+    .strength-bar span {
+      flex: 1;
+      height: 3px;
+      border-radius: 99px;
+      background: rgba(255,255,255,0.1);
+      transition: background 0.3s;
+    }
+
+    .strength-label {
+      font-size: 11px;
+      margin-top: 5px;
+      color: rgba(255,255,255,0.4);
+      transition: color 0.3s;
+    }
+
+    .strength-0 span { background: rgba(255,255,255,0.1); }
+    .strength-1 span:nth-child(1) { background: #ef4444; }
+    .strength-2 span:nth-child(-n+2) { background: #f97316; }
+    .strength-3 span:nth-child(-n+3) { background: #eab308; }
+    .strength-4 span { background: #22c55e; }
+
+    button#resetBtn {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, #7c3aed, #5b21b6);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: opacity 0.2s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    button#resetBtn:hover:not(:disabled) { opacity: 0.9; }
+    button#resetBtn:active:not(:disabled) { transform: scale(0.98); }
+    button#resetBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .message {
+      margin-top: 16px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .message.error {
+      background: rgba(239,68,68,0.15);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: #fca5a5;
+    }
+
+    .message.success {
+      background: rgba(34,197,94,0.15);
+      border: 1px solid rgba(34,197,94,0.3);
+      color: #86efac;
+    }
+
+    .redirect-note {
+      font-size: 12px;
+      margin-top: 6px;
+      opacity: 0.7;
+    }
+
+    /* State: invalid link */
+    #invalid-screen {
+      display: none;
+      text-align: center;
+    }
+
+    #invalid-screen .icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+
+    #invalid-screen p {
+      color: rgba(255,255,255,0.6);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <div class="logo-mark">P</div>
+      <h1>Parauxo</h1>
+      <p>Secure account recovery</p>
+    </div>
+
+    <!-- Valid link screen -->
+    <div id="reset-screen">
+      <h2>Set a new password</h2>
+      <p class="subtitle">Choose a strong password you haven't used before.</p>
+
+      <div class="field">
+        <label for="password">New password</label>
+        <div class="input-wrap">
+          <input type="password" id="password" placeholder="At least 8 characters" autocomplete="new-password">
+          <button class="toggle-eye" type="button" aria-label="Toggle password visibility" onclick="toggleVisibility('password', this)">
+            &#128065;
+          </button>
+        </div>
+        <div class="strength-bar" id="strengthBar">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <div class="strength-label" id="strengthLabel"></div>
+      </div>
+
+      <div class="field">
+        <label for="confirm">Confirm password</label>
+        <div class="input-wrap">
+          <input type="password" id="confirm" placeholder="Repeat your new password" autocomplete="new-password">
+          <button class="toggle-eye" type="button" aria-label="Toggle confirm password visibility" onclick="toggleVisibility('confirm', this)">
+            &#128065;
+          </button>
+        </div>
+      </div>
+
+      <button id="resetBtn">
+        <span class="spinner" id="spinner"></span>
+        <span id="btnText">Reset Password</span>
+      </button>
+
+      <div class="message" id="message"></div>
+    </div>
+
+    <!-- Invalid / expired link screen -->
+    <div id="invalid-screen">
+      <div class="icon">&#128274;</div>
+      <h2 style="color:#fff; margin-bottom:8px;">Link expired</h2>
+      <p>This password reset link is invalid or has already been used. Please request a new one from the app.</p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import {
+      getAuth,
+      verifyPasswordResetCode,
+      confirmPasswordReset
+    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey:     "AIzaSyD6Gf3mhxFCfhxYRuMDY68-5jLyiNLkf7Y",
+      authDomain: "parauxo-new.firebaseapp.com",
+      projectId:  "parauxo-new"
+    };
+
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const params  = new URLSearchParams(window.location.search);
+    const oobCode = params.get("oobCode");
+
+    const strengthLevels = ["", "Weak", "Fair", "Good", "Strong"];
+    const strengthColors = ["", "#ef4444", "#f97316", "#eab308", "#22c55e"];
+
+    // Validate the code on page load; show error screen if invalid/expired
+    if (!oobCode) {
+      showInvalidScreen();
+    } else {
+      verifyPasswordResetCode(auth, oobCode).catch(() => showInvalidScreen());
+    }
+
+    function showInvalidScreen() {
+      document.getElementById("reset-screen").style.display = "none";
+      document.getElementById("invalid-screen").style.display = "block";
+    }
+
+    // Password strength scorer (0–4)
+    function scorePassword(pw) {
+      let score = 0;
+      if (pw.length >= 8)  score++;
+      if (pw.length >= 12) score++;
+      if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) score++;
+      if (/[^A-Za-z0-9]/.test(pw) || /\d/.test(pw)) score++;
+      return score;
+    }
+
+    document.getElementById("password").addEventListener("input", function () {
+      const score = this.value.length ? scorePassword(this.value) : 0;
+      const bar   = document.getElementById("strengthBar");
+      const label = document.getElementById("strengthLabel");
+
+      bar.className = "strength-bar strength-" + score;
+      label.textContent  = score ? strengthLevels[score] : "";
+      label.style.color  = score ? strengthColors[score] : "";
+    });
+
+    document.getElementById("resetBtn").addEventListener("click", async () => {
+      const password = document.getElementById("password").value;
+      const confirm  = document.getElementById("confirm").value;
+      const msgEl    = document.getElementById("message");
+
+      // Client-side validation
+      if (password.length < 8) {
+        showMessage("error", "Password must be at least 8 characters.");
+        return;
+      }
+      if (password !== confirm) {
+        showMessage("error", "Passwords don't match. Please try again.");
+        return;
+      }
+
+      setLoading(true);
+      clearMessage();
+
+      try {
+        await verifyPasswordResetCode(auth, oobCode);
+        await confirmPasswordReset(auth, oobCode, password);
+
+        showMessage("success",
+          "Password updated successfully! You can now go back to the Parauxo app and log in." +
+          '<div class="redirect-note">You may close this page.</div>'
+        );
+        document.getElementById("resetBtn").disabled = true;
+
+      } catch (err) {
+        showMessage("error", friendlyError(err.code));
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    function setLoading(on) {
+      const btn     = document.getElementById("resetBtn");
+      const spinner = document.getElementById("spinner");
+      const text    = document.getElementById("btnText");
+      btn.disabled        = on;
+      spinner.style.display = on ? "block" : "none";
+      text.textContent    = on ? "Resetting…" : "Reset Password";
+    }
+
+    function showMessage(type, html) {
+      const el = document.getElementById("message");
+      el.className    = "message " + type;
+      el.innerHTML    = html;
+      el.style.display = "block";
+    }
+
+    function clearMessage() {
+      const el = document.getElementById("message");
+      el.style.display = "none";
+      el.innerHTML = "";
+    }
+
+    function friendlyError(code) {
+      const map = {
+        "auth/expired-action-code": "This reset link has expired. Please request a new one.",
+        "auth/invalid-action-code": "This reset link is invalid or has already been used.",
+        "auth/user-disabled":       "This account has been disabled. Please contact support.",
+        "auth/user-not-found":      "No account found for this email address.",
+        "auth/weak-password":       "Please choose a stronger password (at least 8 characters).",
+      };
+      return map[code] || "Something went wrong. Please try again or request a new link.";
+    }
+  </script>
+
+  <script>
+    function toggleVisibility(id, btn) {
+      const input = document.getElementById(id);
+      const isHidden = input.type === "password";
+      input.type = isHidden ? "text" : "password";
+      btn.style.color = isHidden ? "rgba(255,255,255,0.8)" : "rgba(255,255,255,0.4)";
+    }
+  </script>
+</body>
+</html>
